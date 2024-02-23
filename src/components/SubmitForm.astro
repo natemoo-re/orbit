@@ -1,0 +1,138 @@
+---
+let defaultValue: string | undefined;
+let success: boolean | undefined;
+let errors: { url?: string } = {};
+if (Astro.cookies.has("form")) {
+  ({
+    v: defaultValue,
+    s: success,
+    e: errors = {},
+  } = Astro.cookies.get("form")!.json());
+  Astro.cookies.delete("form", { path: "/" });
+}
+
+const formAttributes = success
+  ? { "data-success": `${defaultValue} has been added!` }
+  : {};
+---
+
+<form action="/api/submit" method="post" {...formAttributes}>
+  <label for="url" data-error={errors.url}>
+    <input
+      id="url"
+      name="url"
+      required="true"
+      type="url"
+      value={defaultValue}
+      autofocus
+      onfocus={"this.setSelectionRange(this.value.length, this.value.length);"}
+    />
+  </label>
+
+  <button type="submit">Submit</button>
+</form>
+
+<script>
+  const count = document.querySelector("#count") as HTMLSpanElement;
+  const form = document.querySelector("form") as HTMLFormElement;
+
+  const reset = (input: HTMLInputElement) => {
+    input.setCustomValidity("");
+    setSuccess();
+    setError(input.name);
+  };
+  const setupReset = (name: string) => {
+    const input = document.querySelector(
+      `input[name="${name}"]`
+    ) as HTMLInputElement;
+    input.addEventListener("input", () => reset(input), {
+      once: true,
+    });
+  };
+  function setSuccess(message?: string) {
+    if (message) {
+      form.dataset.success = message;
+      count.textContent = `${Number(count.textContent) + 1}`;
+    } else {
+      delete form.dataset.success;
+    }
+  }
+  function setError(name: string, message?: string) {
+    const input = form.querySelector(
+      `input[name="${name}"]`
+    ) as HTMLInputElement;
+    const label = input.labels!.item(0)!;
+    if (message) {
+      label.dataset.error = message;
+    } else {
+      delete label.dataset.error;
+    }
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const endpoint = new URL(form.action, window.location.origin);
+    const res = await fetch(endpoint.href, {
+      body: new FormData(form),
+      method: "post",
+      headers: { accept: "application/json" },
+    });
+    const { success, errors = {} } = await res.json();
+    if (success) {
+      setSuccess(`${form.url.value} has been added!`);
+      form.reset();
+    } else if (Object.keys(errors).length > 0) {
+      for (const [name, message] of Object.entries(errors)) {
+        setError(name, message as string);
+        setupReset(name);
+      }
+    } else {
+      setError(
+        "url",
+        "Our server was unable to process this. Please try again later!"
+      );
+      setupReset("url");
+    }
+  });
+
+  for (const input of form.querySelectorAll("input")) {
+    input.addEventListener("invalid", (e) => {
+      e.preventDefault();
+      setError(input.name, input.validationMessage);
+      setupReset(input.name);
+    });
+  }
+</script>
+
+<style>
+  form {
+    display: grid;
+    grid-template-columns: 4fr 1fr;
+    gap: 1rem;
+  }
+  input,
+  button {
+    line-height: 1;
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: center;
+    font: inherit;
+    font-size: 1rem;
+    padding: 0.5em;
+    height: 2.5rem;
+    width: 100%;
+  }
+  form[data-success]::after {
+    content: attr(data-success);
+    color: green;
+  }
+  label[data-error]::after {
+    font-size: 0.9rem;
+    content: attr(data-error);
+    text-wrap: wrap;
+    color: red;
+    display: block;
+    padding: 0.5em;
+  }
+</style>

@@ -1,16 +1,58 @@
 ---
+import { db, sites, sql } from "astro:db";
+import SubmitForm from "../components/SubmitForm.astro";
+import Orbit from "../components/Orbit.astro";
 
+const [{ count }] = await db
+  .select({ count: sql<number>`count(*)` })
+  .from(sites);
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Orbit</title>
+  </head>
+  <body>
+    <h1>Join our Orbit</h1>
+    <p>
+      Orbit is the official <a href="https://en.wikipedia.org/wiki/Webring"
+        >webring</a
+      > for <a href="https://astro.build">Astro</a> developers.
+    </p>
+
+    <p>
+      Join <span id="count">{count}</span> other astronauts by sharing your
+      personal website built with <a href="https://astro.build">Astro</a>.
+    </p>
+
+    <SubmitForm />
+    <Orbit />
+
+    <style is:global>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        font-family: system-ui, sans-serif;
+      }
+
+      body {
+        padding: 1rem;
+        min-height: 100vh;
+        min-height: 100svh;
+        display: flex;
+        gap: 1rem;
+        flex-flow: column nowrap;
+        max-width: 960px;
+        margin-inline: auto;
+      }
+    </style>
+  </body>
 </html>

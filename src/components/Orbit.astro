@@ -1,0 +1,44 @@
+<ul class="orbit" role="list">
+  <li class="previous">
+    <a href="/previous" referrerpolicy="unsafe-url" target="_blank">Previous</a>
+  </li>
+  <li>
+    <span
+      >Part of the <a href="https://orbit.astro.build">Orbit</a> webring</span
+    >
+  </li>
+  <li class="next">
+    <a href="/next" referrerpolicy="unsafe-url" target="_blank">Next</a>
+  </li>
+</ul>
+
+<style>
+  .orbit {
+    margin-top: auto;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: minmax(1rem, 1fr) auto minmax(1rem, 1fr);
+    list-style: none;
+    gap: 0.5em;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+  }
+  li:first-child span {
+    display: block;
+  }
+  li > a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    flex-grow: 1;
+  }
+</style>

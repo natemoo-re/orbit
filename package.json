@@ -1,7 +1,9 @@
 {
-  "name": "studio-template-empty",
+  "name": "orbit",
   "type": "module",
   "version": "0.0.1",
+  "private": true,
+  "packageManager": "pnpm@8.15.3",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -10,11 +12,11 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/db": "^0.3.4",
-    "astro": "^4.4.0"
+    "@astrojs/db": "0.3.6-nightly-01234567890",
+    "astro": "^4.4.3"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.5.4",
+    "@astrojs/check": "^0.5.5",
     "typescript": "^5.3.3"
   }
 }
